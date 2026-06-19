@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 @RequestMapping("/api")
 public class EnergyMixController {
-    
+
     @GetMapping("")
     public String test() {
         return "API is running";

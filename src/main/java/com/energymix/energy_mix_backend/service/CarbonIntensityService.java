@@ -5,7 +5,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.energymix.energy_mix_backend.dto.CarbonApiResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
@@ -13,11 +12,16 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class CarbonIntensityService {
+    // Base URL for the Carbon Intensity API
     @Value("${carbon-intensity.api.base-url}")
     private String baseUrl;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    // RestTemplate for making HTTP requests
+    private final RestTemplate restTemplate;
+
+    public CarbonIntensityService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public CarbonApiResponse fetch() {
         // Method to fetch data from the Carbon Intensity API
