@@ -1,22 +1,35 @@
 package com.energymix.energy_mix_backend.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.energymix.energy_mix_backend.dto.CarbonApiResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@Service    
+@Service
 public class CarbonIntensityService {
     @Value("${carbon-intensity.api.base-url}")
     private String baseUrl;
 
-    public CarbonIntensityService() {
+    @Autowired
+    private RestTemplate restTemplate;
+
+    public CarbonApiResponse fetch() {
+        // Method to fetch data from the Carbon Intensity API
+
         LocalDateTime from = LocalDate.now().atStartOfDay();
         LocalDateTime to = from.plusDays(3);
 
-        String url = baseUrl + "/generation/" + from.format(DateTimeFormatter.ISO_DATE_TIME) 
-        + "/" + to.format(DateTimeFormatter.ISO_DATE_TIME);
+        String url = baseUrl + "/generation/" + from.format(DateTimeFormatter.ISO_DATE_TIME)
+                + "/" + to.format(DateTimeFormatter.ISO_DATE_TIME);
         System.out.println(url);
+
+        CarbonApiResponse result = restTemplate.getForObject(url, CarbonApiResponse.class);
+        return result;
     }
 }
