@@ -13,24 +13,23 @@ import org.mockito.Mock;
 import com.energymix.energy_mix_backend.dto.CarbonApiResponse;
 import com.energymix.energy_mix_backend.dto.FuelSource;
 import com.energymix.energy_mix_backend.service.CarbonIntensityService;
-import com.energymix.energy_mix_backend.service.EnergyMixService;
-import com.energymix.energy_mix_backend.utils.CleanEnergyUtil;
+import com.energymix.energy_mix_backend.service.ChargingWindowService;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class EnergyMixServiceTest {
+public class ChargingWindowTest {
 
     @Mock
     private CarbonIntensityService carbonIntensityService;
 
     @InjectMocks
-    private EnergyMixService EnergyMixService;
+    private ChargingWindowService chargingWindowService;
 
     @Test
     public void GetEnergyMixTest() {
-        // Test if the service can calculate the average energy mix for a day
+        // Test if the service can find the best charging window
         String today = LocalDate.now().toString();
 
         List<FuelSource> mix1 = List.of(
@@ -60,43 +59,18 @@ public class EnergyMixServiceTest {
         var data2 = new CarbonApiResponse.CarbonApiData(today + "T00:30:00Z", today + "T01:00:00Z", mix2);
         var data3 = new CarbonApiResponse.CarbonApiData(today + "T01:00:00Z", today + "T01:30:00Z", mix3);
 
-        // Response with data for testing purposes
+        // Response with data
         CarbonApiResponse response = new CarbonApiResponse(List.of(data1, data2, data3));
 
         // Mock the response
         when(carbonIntensityService.fetch()).thenReturn(response);
 
         // Get the energy mix from the service
-        var result = EnergyMixService.getEnergyMix();
+        var result = chargingWindowService.findBestWindow(1.0);
 
-        // Get the calculated average sources for today
-        var todayMix = result.days().stream()
-                .filter(d -> d.date().equals(today))
-                .findFirst()
-                .get();
-
-        assertEquals(41.66, todayMix.perc(), 0.01,
-                "Clean energy average should be 41.66%");
-        // Test
-        var windAvg = todayMix.sources().stream()
-                .filter(s -> s.fuel().equals("wind"))
-                .findFirst()
-                .get();
-
-        // Test if wind average is correct
-        assertEquals(16.66, windAvg.perc(), 0.01,
-                "Wind average should be 16.66%");
-
-        // Test if the service can calculate clean energy average correctly
-        var cleanAvg = todayMix.sources().stream()
-                .filter(s -> CleanEnergyUtil.isCleanEnergy(s.fuel()))
-                .mapToDouble(FuelSource::perc)
-                .sum();
-
-        // Test if clean energy average is correct
-        assertEquals(41.66, cleanAvg, 0.01,
-                "Clean energy average should be 41.66%");
-
+        assertEquals(today + "T00:00:00Z", result.start(), "Window should start from data1");
+        assertEquals(today + "T01:00:00Z", result.end(), "Window should end at data2");
+        assertEquals(45.0, result.cleanEnergyPerc(), 0.01, "Average of first two intervals is 45%");
     }
 
 }
