@@ -7,7 +7,7 @@
 A robust Spring Boot RESTful API core engine for the Energy Mix Dashboard. It fetches real-time data from the UK National Grid API and processes it to calculate the best time window to ecologicly charge an EV.
 
 ## Live Application
-**[Base URL](https://energy-mix-frontend-icpr.onrender.com)**
+**[View Live Application](https://energy-mix-frontend-icpr.onrender.com)**
 
 ## Features
 - **Data Aggregation**: Fetches data from the official `api.carbonintensity.org.uk` to get the current power generation mix.
