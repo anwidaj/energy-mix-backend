@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000") // Allows the frontend to make requests to the backend
+@CrossOrigin(origins = "*") // Allows the frontend to make requests to the backend
 public class EnergyMixController {
 
     // EnergyMixService handles the energy mix data from the API
