@@ -11,4 +11,4 @@ RUN ./mvnw package -DskipTests
 # Expose the port
 EXPOSE 8081
 # Run the application
-ENTRYPOINT ["java", "-jar", "target/energy-mix-backend.jar"]
+ENTRYPOINT ["java", "-jar", "target/energy-mix-backend-0.0.1-SNAPSHOT.jar"]
